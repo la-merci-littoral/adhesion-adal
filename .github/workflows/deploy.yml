@@ -31,17 +31,10 @@ jobs:
           echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> ../.env.production
           echo "BASE_URL=${{ vars.BASE_URL }}" >> ../.env.production
           echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> ../.env.production
-          # Add any other environment variables you need here
 
-      - name: Install dependencies & build backend
+      - name: Install dependencies & build
         run: |
-          cd backend
-          npm install --only=dev
-          npm run build
-
-      - name: Install dependencies & build frontend
-        run: |
-          cd frontend
+          npm install
           npm run build
 
       - name: Deploy Backend
