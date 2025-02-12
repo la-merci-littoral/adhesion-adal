@@ -25,11 +25,11 @@ jobs:
 
       - name: Create .env.production file from GitHub Secrets
         run: |
-          echo "AMOUNT=${{ variables.AMOUNT }}" >> ../.env.production
+          echo "AMOUNT=${{ vars.AMOUNT }}" >> ../.env.production
           echo "STRIPE_PK=${{ secrets.STRIPE_PK }}" >> ../.env.production
           echo "STRIPE_SK=${{ secrets.STRIPE_SK }}" >> ../.env.production
           echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> ../.env.production
-          echo "BASE_URL=${{ variables.BASE_URL }}" >> ../.env.production
+          echo "BASE_URL=${{ vars.BASE_URL }}" >> ../.env.production
           echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> ../.env.production
           # Add any other environment variables you need here
 
