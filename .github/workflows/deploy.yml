@@ -1,0 +1,71 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    environment: production-ionos
+    steps:
+    
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18  # Use the same version as your VPS
+
+      - name: Create .env.production file from GitHub Secrets
+        run: |
+          echo "AMOUNT=${{ variables.AMOUNT }}" >> ../.env.production
+          echo "STRIPE_PK=${{ secrets.STRIPE_PK }}" >> ../.env.production
+          echo "STRIPE_SK=${{ secrets.STRIPE_SK }}" >> ../.env.production
+          echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> ../.env.production
+          echo "BASE_URL=${{ variables.BASE_URL }}" >> ../.env.production
+          echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> ../.env.production
+          # Add any other environment variables you need here
+
+      - name: Install dependencies & build backend
+        run: |
+          cd backend
+          npm install --only=dev
+          npm run build
+
+      - name: Install dependencies & build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Deploy Backend
+        run: |
+          rm -rf /web/adhesion-adal/backend/*
+          cp -r backend/dist /web/adhesion-adal/backend/
+          cp backend/package.json /web/adhesion-adal/backend/
+          cd /web/adhesion-adal/backend/
+          npm install --omit=dev
+
+      - name: Deploy Frontend
+        run: |
+          rm -rf /web/adhesion-adal/frontend/*
+          cp -r frontend/dist/* /web/adhesion-adal/frontend/
+
+      - name: Restart Backend Service
+        run: |
+          pm2 restart backend || pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
+          pm2 save
+
+      - name: Set Correct Permissions
+        run: |
+          sudo chown -R www-data:www-data /web/adhesion-adal/
+          sudo chmod -R 755 /web/adhesion-adal/
+
+      - name: Cleanup Old Builds
+        run: rm -rf /home/github/_work/*
