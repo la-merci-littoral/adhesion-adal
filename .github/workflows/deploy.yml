@@ -70,4 +70,4 @@ jobs:
           sudo chmod -R 755 /web/adhesion-adal/
 
       - name: Cleanup Old Builds
-        run: rm -rf /home/github/_work/*
+        run: rm -rf ../*
