@@ -35,11 +35,8 @@ jobs:
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env.production
           echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> .env.production
 
-      - name: Build backend
-        run: NODE_ENV=production npm --workspace backend run build
-
-      - name: Build frontend
-        run: NODE_ENV=production npm --workspace frontend run build
+      - name: Build
+        run: NODE_ENV=production npm run build
 
       - name: Transfer Backend to VPS
         uses: appleboy/scp-action@v0.1.1
@@ -47,7 +44,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/backend/
+          target: /web/adhesion-adal/
           source: backend/dist/
           rm: true
 
@@ -57,7 +54,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/frontend/
+          target: /web/adhesion-adal/
           source: frontend/dist/
           rm: true
 
