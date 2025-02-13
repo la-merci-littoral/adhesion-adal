@@ -21,21 +21,30 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18  # Use the same version as your VPS
+          node-version: 18 
 
+      - name: Restore node_modules from cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install possibly missing node modules
+        run: npm install
+        
       - name: Create .env.production file from GitHub Secrets
         run: |
-          echo "AMOUNT=${{ vars.AMOUNT }}" >> ../.env.production
-          echo "STRIPE_PK=${{ secrets.STRIPE_PK }}" >> ../.env.production
-          echo "STRIPE_SK=${{ secrets.STRIPE_SK }}" >> ../.env.production
-          echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> ../.env.production
-          echo "BASE_URL=${{ vars.BASE_URL }}" >> ../.env.production
-          echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> ../.env.production
+          echo "AMOUNT=${{ vars.AMOUNT }}" >> .env.production
+          echo "STRIPE_PK=${{ secrets.STRIPE_PK }}" >> .env.production
+          echo "STRIPE_SK=${{ secrets.STRIPE_SK }}" >> .env.production
+          echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> .env.production
+          echo "BASE_URL=${{ vars.BASE_URL }}" >> .env.production
+          echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> .env.production
 
-      - name: Install dependencies & build
-        run: |
-          npm install
-          npm run build
+      - name: Build project
+        run: npm run build
 
       - name: Deploy Backend
         run: |
