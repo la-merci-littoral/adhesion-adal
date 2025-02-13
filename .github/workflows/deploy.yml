@@ -10,8 +10,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+  build-and-deploy:
+    runs-on: ubuntu-latest
     environment: production-ionos
     steps:
     
@@ -22,14 +22,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18 
-
-      # - name: Restore node_modules from cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: node_modules
-      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
 
       - name: Install node modules
         run: npm install
@@ -46,35 +38,51 @@ jobs:
       - name: Build backend
         run: NODE_ENV=production npm --workspace backend run build
 
-      - name: Deploy Backend
-        run: |
-          rm -rf /web/adhesion-adal/backend/*
-          cp -r backend/dist /web/adhesion-adal/backend/
-          cp backend/package.json /web/adhesion-adal/backend/
-          cd /web/adhesion-adal/backend/
-          npm install --omit=dev
-
       - name: Build frontend
         run: NODE_ENV=production npm --workspace frontend run build
 
-      - name: Deploy Frontend
-        run: |
-          rm -rf /web/adhesion-adal/frontend/*
-          cp -r frontend/dist/* /web/adhesion-adal/frontend/
+      - name: Transfer Backend to VPS
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          target: /web/adhesion-adal/backend/
+          source: backend/dist/
+          rm: true
 
-      - name: Restart Backend Service
-        run: |
-          if pm2 describe adhesion-backend > /dev/null; then
-            pm2 restart adhesion-backend
-          else
-            pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
-          fi
-          pm2 save
+      - name: Transfer Frontend to VPS
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          target: /web/adhesion-adal/frontend/
+          source: frontend/dist/
+          rm: true
 
-      - name: Set Correct Permissions
-        run: |
-          sudo chown -R www-data:www-data /web/adhesion-adal/
-          sudo chmod -R 755 /web/adhesion-adal/
-
-      - name: Cleanup Old Builds
-        run: rm -rf ../*
+      - name: Reload Backend on VPS
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /web/adhesion-adal/backend/
+            npm install --omit=dev
+            if pm2 describe adhesion-backend > /dev/null; then
+              pm2 restart adhesion-backend
+            else
+              pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
+            fi
+            pm2 save
+      
+      - name: Reload Frontend on VPS
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            sudo chown -R www-data:www-data /web/adhesion-adal/frontend
+            sudo chmod -R 755 /web/adhesion-adal/frontend
