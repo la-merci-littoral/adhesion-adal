@@ -23,15 +23,15 @@ jobs:
         with:
           node-version: 18 
 
-      - name: Restore node_modules from cache
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      # - name: Restore node_modules from cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: node_modules
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
 
-      - name: Install possibly missing node modules
+      - name: Install node modules
         run: npm install
         
       - name: Create .env.production file from GitHub Secrets
@@ -43,8 +43,8 @@ jobs:
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env.production
           echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> .env.production
 
-      - name: Build project
-        run: npm run build
+      - name: Build backend
+        run: NODE_ENV=production npm --workspace backend run build
 
       - name: Deploy Backend
         run: |
@@ -53,6 +53,9 @@ jobs:
           cp backend/package.json /web/adhesion-adal/backend/
           cd /web/adhesion-adal/backend/
           npm install --omit=dev
+
+      - name: Build frontend
+        run: NODE_ENV=production npm --workspace frontend run build
 
       - name: Deploy Frontend
         run: |
