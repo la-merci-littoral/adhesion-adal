@@ -64,7 +64,11 @@ jobs:
 
       - name: Restart Backend Service
         run: |
-          pm2 restart backend || pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
+          if pm2 describe adhesion-backend > /dev/null; then
+            pm2 restart adhesion-backend
+          else
+            pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
+          fi
           pm2 save
 
       - name: Set Correct Permissions
