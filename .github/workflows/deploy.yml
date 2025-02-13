@@ -46,7 +46,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           target: /web/adhesion-adal/
           source: backend/dist/
-          rm: true
+          overwrite: true
 
       - name: Transfer Frontend to VPS
         uses: appleboy/scp-action@v0.1.1
@@ -56,7 +56,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           target: /web/adhesion-adal/
           source: frontend/dist/
-          rm: true
+          overwrite: true
 
       - name: Reload Backend on VPS
         uses: appleboy/ssh-action@v0.1.1
