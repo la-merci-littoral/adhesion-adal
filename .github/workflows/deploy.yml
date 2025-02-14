@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           target: /web/adhesion-adal/
-          source: backend/*
+          source: "backend/*,.env.production"
           overwrite: true
 
       - name: Transfer Frontend to VPS
@@ -67,6 +67,7 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd /web/adhesion-adal/backend/
+            cp ../.env.production .
             npm install --omit=dev
             if pm2 describe adhesion-backend > /dev/null; then
               pm2 restart adhesion-backend
