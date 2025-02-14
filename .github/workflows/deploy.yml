@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/backend
+          target: /web/adhesion-adal/
           source: backend/*
           overwrite: true
 
@@ -54,9 +54,10 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/frontend
+          target: /web/adhesion-adal/
           source: frontend/dist/*
           overwrite: true
+          strip_components: 1
 
       - name: Reload Backend on VPS
         uses: appleboy/ssh-action@v0.1.1
