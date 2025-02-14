@@ -70,9 +70,9 @@ jobs:
             cp ../.env.production .
             npm install --omit=dev
             if pm2 describe adhesion-backend > /dev/null; then
-              pm2 restart adhesion-backend
+              NODE_ENV=production pm2 restart adhesion-backend --update-env
             else
-              pm2 start /web/adhesion-adal/backend/dist/main.js --name adhesion-backend
+              NODE_ENV=production pm2 start /web/adhesion-adal/backend/dist/main.js --name adhesion-backend
             fi
             pm2 save
       
