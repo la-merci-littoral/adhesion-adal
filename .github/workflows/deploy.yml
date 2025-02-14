@@ -71,7 +71,7 @@ jobs:
             if pm2 describe adhesion-backend > /dev/null; then
               pm2 restart adhesion-backend
             else
-              pm2 start /web/adhesion-adal/backend/dist/index.js --name adhesion-backend
+              pm2 start /web/adhesion-adal/backend/dist/main.js --name adhesion-backend
             fi
             pm2 save
       
@@ -82,5 +82,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
+            rm -rf /web/adhesion-adal/frontend
+            mv /web/adhesion-adal/dist /web/adhesion-adal/frontend
             sudo chown -R www-data:www-data /web/adhesion-adal/frontend
             sudo chmod -R 755 /web/adhesion-adal/frontend
