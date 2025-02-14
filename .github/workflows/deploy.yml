@@ -44,8 +44,8 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/
-          source: backend/dist/
+          target: /web/adhesion-adal/backend
+          source: backend/*
           overwrite: true
 
       - name: Transfer Frontend to VPS
@@ -54,8 +54,8 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          target: /web/adhesion-adal/
-          source: frontend/dist/
+          target: /web/adhesion-adal/frontend
+          source: frontend/dist/*
           overwrite: true
 
       - name: Reload Backend on VPS
