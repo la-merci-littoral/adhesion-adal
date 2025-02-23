@@ -8,7 +8,7 @@ import MobileView from './views/MobileView.vue';
 </script>
 
 <template>
-  <main v-if="!isMobile">
+  <main v-if="!isMobile.isMobile">
     <div id="header-wrapper">
       <header>
         <img :src="Logo" alt="Logo de l'association">
