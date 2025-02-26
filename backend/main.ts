@@ -74,15 +74,16 @@ router.put("/person", async (req, res) => {
     }
     delete userData.pi_secret;
 
-    await AdhesionModel.updateOne({
+    const inserted = await AdhesionModel.findOneAndUpdate({
         $or: [
             { "email": userData.email },
             { "adhesion.payment.intentId": paymentIntentId }
         ]
-    }, userData, {upsert: true})
+    }, userData, {upsert: true, new: true});
 
     res.send({
         clientSecret: paymentIntentSecret,
+        memberId: inserted?.member_id
     })
 
 });

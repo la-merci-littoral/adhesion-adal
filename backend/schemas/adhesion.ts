@@ -1,7 +1,10 @@
 import mongoose, { mongo, Schema, Model } from "mongoose";
 import IPerson from "../types/person";
+import { nanoid, customAlphabet } from "nanoid";
 
 const PersonSchema: Schema<IPerson> = new Schema({
+    _id: { type: String, required: true},
+    member_id: { type: String, required: true, default: () => customAlphabet("1234567890", 6)() },
     name: { type: String, required: true },
     surname: { type: String, required: true },
     email: { type: String, required: true },

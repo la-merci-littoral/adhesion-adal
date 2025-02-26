@@ -63,6 +63,7 @@ onBeforeMount(() => {
             .then((data) => {
                 clientSecret.value = data.clientSecret;
                 person.$state.pi_secret = clientSecret.value
+                person.$state.id = data.memberId
                 stripeLoaded.value = true
             });
     });

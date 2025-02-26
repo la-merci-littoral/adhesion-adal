@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 interface PersonState {
+  id: string;
   name: string;
   surname: string;
   email: string;
@@ -16,6 +17,7 @@ interface PersonState {
 
 export const usePersonStore = defineStore('person', {
   state: () => ({
+    id: '',
     name: '',
     surname: '',
     email: '',

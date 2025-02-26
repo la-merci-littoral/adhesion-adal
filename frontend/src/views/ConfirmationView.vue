@@ -7,7 +7,7 @@ const person = usePersonStore();
     <div id="confirmation-wrapper">
         <h2>Confirmation</h2>
         <p>Merci pour votre adhésion {{ person.fullName }} !</p>
-        <p>Vous allez recevoir un email de confirmation</p>
+        <p>Votre numéro d'adhésion est le <span id="memberId">{{ person.id }}</span></p>
     </div>
 </template>
 
@@ -37,6 +37,11 @@ p {
     text-align: center;
     margin-bottom: 2px;
     font-size: 120%;
+}
+
+#memberId {
+    font-weight: bold;
+    font-size: 140%;
 }
 
 </style>
