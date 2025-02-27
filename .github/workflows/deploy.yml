@@ -107,5 +107,7 @@ jobs:
           script: |
             mv /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-available/adhesion-adal.conf
             ln -s /etc/nginx/sites-available/adhesion-adal.conf /etc/nginx/sites-enabled/adhesion-adal.conf
-            certbot install --cert-name adhesion.amis-du-littoral.fr --nginx
+            if [ ! -f /etc/letsencrypt/live/adhesion.amis-du-littoral.fr/fullchain.pem ]; then
+              sudo certbot --nginx -d adhesion.amis-du-littoral.fr --non-interactive --agree-tos -m ${{ secrets.CERTBOT_EMAIL }}
+            fi
             nginx -s reload
