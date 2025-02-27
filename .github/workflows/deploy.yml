@@ -59,6 +59,16 @@ jobs:
           overwrite: true
           strip_components: 1
 
+      - name: Transfer Nginx Config to VPS
+        uses: appleboy/scp-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          target: /etc/nginx/sites-available/
+          source: nginx.conf
+          overwrite: true
+
       - name: Reload Backend on VPS
         uses: appleboy/ssh-action@v0.1.1
         with:
@@ -87,3 +97,15 @@ jobs:
             mv /web/adhesion-adal/dist /web/adhesion-adal/frontend
             sudo chown -R www-data:www-data /web/adhesion-adal/frontend
             sudo chmod -R 755 /web/adhesion-adal/frontend
+
+      - name: Reload Nginx on VPS
+        uses: appleboy/ssh-action@v0.1.1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            mv /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-available/adhesion-adal.conf
+            ln -s /etc/nginx/sites-available/adhesion-adal.conf /etc/nginx/sites-enabled/adhesion-adal.conf
+            certbot install --cert-name adhesion.amis-du-littoral.fr --nginx
+            nginx -s reload
