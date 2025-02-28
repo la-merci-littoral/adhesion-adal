@@ -106,8 +106,5 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             mv /etc/nginx/sites-available/nginx.conf /etc/nginx/sites-available/adhesion-adal.conf
-            ln -s /etc/nginx/sites-available/adhesion-adal.conf /etc/nginx/sites-enabled/adhesion-adal.conf
-            if [ ! -f /etc/letsencrypt/live/adhesion.amis-du-littoral.fr/fullchain.pem ]; then
-              sudo certbot --nginx -d adhesion.amis-du-littoral.fr --non-interactive --agree-tos -m ${{ secrets.CERTBOT_EMAIL }}
-            fi
+            ln -sf /etc/nginx/sites-available/adhesion-adal.conf /etc/nginx/sites-enabled/adhesion-adal.conf
             nginx -s reload
