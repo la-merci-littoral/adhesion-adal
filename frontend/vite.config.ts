@@ -13,6 +13,7 @@ if (process.env.NODE_ENV === 'development') {
       '/api': {
         target: 'http://localhost:5174',
         changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/api/, '')
       }
     }
   }
