@@ -1,4 +1,7 @@
 import express, { Request, Response } from 'express';
+import ejs from 'ejs';
+import fs from 'fs';
+import nodemailer from 'nodemailer';
 
 interface RawRequest extends Request {
     rawBody?: string;
@@ -24,7 +27,26 @@ app.use('/', router);
 
 const stripe = new Stripe(process.env.STRIPE_SK!);
 
-mongoose.connect(process.env.MONGO_CONN_STR!)
+mongoose.connect(process.env.MONGO_CONN_STR!);
+
+const mailTransport = nodemailer.createTransport({
+    pool: true,
+    host: process.env.EMAIL_HOST!,
+    port: parseInt(process.env.EMAIL_PORT!),
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER!,
+        pass: process.env.EMAIL_PASS!
+    }
+});
+
+const emailTemplates: { [key: string]: string } = {};
+
+fs.readdirSync('./emails').forEach(file => {
+    const templateName = file.replace('.ejs', '');
+    const templateContent = fs.readFileSync(`./emails/${file}`, 'utf-8');
+    emailTemplates[templateName] = templateContent;
+});
 
 async function generatePaymentIntent() {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -101,8 +123,19 @@ router.post("/payment/webhook", express.raw({type: 'application/json'}),async (r
     }
     event = req.body as Stripe.Event;
     if (event.type == 'payment_intent.succeeded') {
-        await AdhesionModel.findOneAndUpdate({"adhesion.payment.intentId": event.data.object.id}, {"adhesion.payment.hasPaid" : true, "adhesion.payment.date": new Date(), "adhesion.payment.method": event.data.object.payment_method});
+        const doc = await AdhesionModel.findOne({"adhesion.payment.intentId": event.data.object.id});
+        doc!.updateOne({"adhesion.payment.hasPaid" : true, "adhesion.payment.date": new Date(), "adhesion.payment.method": event.data.object.payment_method})
         console.log(event.data.object.id + " has been paid");
+        console.log(doc)
+        await mailTransport.sendMail({
+            from: 'ne-pas-repondre@amis-du-littoral.fr',
+            to: doc!.email,
+            subject: "ADAL - Confirmation d'adhésion",
+            // html: ejs.render(emailTemplates["adhesion_paid"], {
+            //     member_id: doc!.member_id
+            // }),
+            html: "coucou",
+        })
     }
     res.json({received: true});
 });
