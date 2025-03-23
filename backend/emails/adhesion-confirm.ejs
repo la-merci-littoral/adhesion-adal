@@ -1,1 +1,57 @@
-<p>Bonjour <%= member_id %></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: white;
+        }
+
+        h2 {
+            margin-left: 20px;
+            color: #2570b4;
+        }
+
+        table.header-table {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        span#member_id {
+            font-weight: bold;
+            font-size: 120%;
+            color: #1f76c7;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <table class="header-table" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <img src="<% base_url %>/api/logo" alt="" style="width: 120px;">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h2 style="margin: 0;">Association des Amis du Littoral</h2>
+                </td>
+            </tr>
+        </table>
+    </header>
+    <main>
+        <p>Bonjour <%= name %> <%= surname %> !</p>
+        <p>L'association des Amis du Littoral vous remercie pour votre adhésion en date du <%= adhesion.date.toLocaleDateString('fr-FR') %> à <%= adhesion.date.toLocaleTimeString('fr-FR') %>.</p>
+        <p>
+            Votre numéro d'adhérent est le <span id="member_id"><%= member_id %></span>.
+            <br>
+            Ce numéro est à conserver car il vous sera demandé pour bénéficier de remise sur les évènements organisés par l’ADAL.
+        </p>
+        <p>A très bientôt !<br>Le BDE du lycée La Merci Littoral<br><a href="mailto:contact@amis-du-littoral.fr">contact@amis-du-littoral.fr</a></p>
+    </main>
+</body>
+</html>

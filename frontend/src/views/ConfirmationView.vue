@@ -7,8 +7,17 @@ const person = usePersonStore();
 <template>
     <div id="confirmation-wrapper">
         <h2>Confirmation</h2>
-        <p>Merci pour votre adhésion {{ person.fullName }} !</p>
-        <p>Votre numéro d'adhésion est le <span id="memberId">{{ person.id }}</span></p>
+        <p id="thanks">
+            Merci pour votre adhésion {{ person.fullName }} !
+            <br>
+            Votre numéro est le <span id="memberId">{{ person.id }}</span>
+        </p>
+        <p id="email-info">
+            Vous allez recevoir un email de confirmation à l'adresse suivante : <span style="font-style: italic;">{{ person.email }}</span>
+            <br>
+            <span id="junk-warning">Pensez à vérifier vos spams !</span>
+        </p>
+        <p id="session-end">Cette session s'est vidée, vous pouvez à présent fermer l'onglet ou la fenêtre.</p>
     </div>
 </template>
 
@@ -43,6 +52,22 @@ p {
 #memberId {
     font-weight: bold;
     font-size: 140%;
+}
+
+p#email-info {
+    font-size: 110%;
+    width: 80%;
+    max-width: 600px; /* Added to limit the width */
+}
+
+span#junk-warning {
+    font-size: 90%;
+}
+
+p#session-end {
+    font-size: 90%;
+    margin-top: 30px;
+    font-style: italic;
 }
 
 </style>
