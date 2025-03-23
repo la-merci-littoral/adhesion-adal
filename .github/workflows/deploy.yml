@@ -34,6 +34,10 @@ jobs:
           echo "STRIPE_WBH_SECRET=${{ secrets.STRIPE_WBH_SECRET }}" >> .env.production
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env.production
           echo "MONGO_CONN_STR=${{ secrets.MONGO_CONN_STR }}" >> .env.production
+          echo "EMAIL_HOST=${{ secrets.EMAIL_HOST }}" >> .env.production
+          echo "EMAIL_PORT=${{ secrets.EMAIL_PORT }}" >> .env.production
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env.production
+          echo "EMAIL_PASS=${{ secrets.EMAIL_PASS }}" >> .env.production
 
       - name: Build
         run: NODE_ENV=production npm run build
