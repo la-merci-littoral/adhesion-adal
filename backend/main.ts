@@ -128,17 +128,13 @@ router.post("/payment/webhook", express.raw({type: 'application/json'}), async (
     event = req.body as Stripe.Event;
     if (event.type == 'payment_intent.succeeded') {
         const doc = await AdhesionModel.findOne({"adhesion.payment.intentId": event.data.object.id});
-        await doc!.updateOne({"adhesion.payment.hasPaid" : true, "adhesion.payment.date": new Date(), "adhesion.payment.method": event.data.object.payment_method})
+        await doc!.updateOne({"adhesion.payment.hasPaid" : true, "adhesion.payment.date": new Date(), "adhesion.payment.method": event.data.object.payment_method});
+        (doc as any).base_url = process.env.BASE_URL!;
         mailTransport.sendMail({
             from: 'ADAL Ne pas Répondre ne-pas-repondre@amis-du-littoral.fr',
             to: doc!.email,
             subject: "ADAL - Confirmation d'adhésion",
             html: ejs.render(emailTemplates['adhesion-confirm'], doc!),
-            attachments: [{
-                filename: 'logo.png',
-                path: __dirname + '/emails/assets/logo.png',
-                cid: 'logo@amis-du-littoral.fr'
-            }]
         })
     }
     res.json({received: true});
