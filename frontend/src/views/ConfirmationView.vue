@@ -28,7 +28,7 @@ localStorage.removeItem('person');
     border-radius: 25px;
     color: white;
     background-color: #2c7ba8;
-    border: 2px solid #1d338f;
+    border: 2px solid white;
 
     display: flex;
     flex-direction: column;

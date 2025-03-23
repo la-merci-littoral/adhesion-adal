@@ -5,6 +5,7 @@ import '@fontsource/lexend';
 import Logo from '@/assets/placeholder_rdle.png'
 import isMobile from 'mobile-device-detect'
 import MobileView from './views/MobileView.vue';
+import Help from './components/Help.vue';
 </script>
 
 <template>
@@ -17,6 +18,7 @@ import MobileView from './views/MobileView.vue';
     </div>
     <div id="main-wrapper">
       <RouterView />
+      <Help />
     </div>
   </main>
   <MobileView v-else />
@@ -42,7 +44,7 @@ import MobileView from './views/MobileView.vue';
     justify-content: center;
     align-items: center;
     background-color: #31749e;
-    border-right: 2px solid #1d338f;
+    border-right: 2px solid white;
   }
 
   header {
