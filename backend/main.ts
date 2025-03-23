@@ -114,30 +114,48 @@ router.put("/person", async (req, res) => {
 
 });
 
-router.post("/payment/webhook", express.raw({type: 'application/json'}), async (req, res) => {
-
+router.post("/payment/webhook", express.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'];
     let event: Stripe.Event;
     try {
         event = stripe.webhooks.constructEvent((req as RawRequest).rawBody!, sig!, process.env.STRIPE_WBH_SECRET!);
     } catch (err: any | Error) {
-        console.error(err.message)
+        console.error(err.message);
         res.status(400).send(`Webhook Error: ${err.message}`);
-        return
+        return;
     }
+
     event = req.body as Stripe.Event;
     if (event.type == 'payment_intent.succeeded') {
-        const doc = await AdhesionModel.findOne({"adhesion.payment.intentId": event.data.object.id});
-        await doc!.updateOne({"adhesion.payment.hasPaid" : true, "adhesion.payment.date": new Date(), "adhesion.payment.method": event.data.object.payment_method});
-        (doc as any).base_url = process.env.BASE_URL!;
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+
+        const updateResult = await AdhesionModel.findOneAndUpdate(
+            { "adhesion.payment.intentId": paymentIntent.id },
+            {
+                $set: {
+                    "adhesion.payment.hasPaid": true,
+                    "adhesion.payment.date": new Date(),
+                    "adhesion.payment.method": paymentIntent.payment_method
+                }
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updateResult) {
+            res.status(404).send("Not found");
+            return;
+        }
+
+        (updateResult as any).base_url = process.env.BASE_URL;
         mailTransport.sendMail({
             from: 'ADAL Ne pas Répondre ne-pas-repondre@amis-du-littoral.fr',
-            to: doc!.email,
+            to: updateResult.email,
             subject: "ADAL - Confirmation d'adhésion",
-            html: ejs.render(emailTemplates['adhesion-confirm'], doc!),
-        })
+            html: ejs.render(emailTemplates['adhesion-confirm'], updateResult),
+        });
     }
-    res.json({received: true});
+
+    res.json({ received: true });
 });
 
 router.get("/validate", async (req, res) => {

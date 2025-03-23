@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePersonStore } from '@/stores/person';
 const person = usePersonStore();
-// localStorage.removeItem('person');
+localStorage.removeItem('person');
 </script>
 
 <template>
