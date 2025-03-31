@@ -55,7 +55,8 @@ fs.readdirSync(path.resolve('./emails')).forEach(file => {
 async function generatePaymentIntent() {
     const paymentIntent = await stripe.paymentIntents.create({
         amount: parseInt(process.env.AMOUNT!),
-        currency: 'eur'
+        currency: 'eur',
+        payment_method_types: ['card']
     });
     return [paymentIntent.id, paymentIntent.client_secret!];
 }

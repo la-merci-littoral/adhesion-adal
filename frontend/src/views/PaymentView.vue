@@ -35,6 +35,7 @@ const stripeOptions = ref<StripeElementsOptionsMode>({
     },
     locale: "fr",
     fonts: [{ cssSrc: "https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap" }],
+    payment_method_types: ["card"],
 });
 const stripeLoaded = ref(false)
 const stripeRendered = ref(false)
