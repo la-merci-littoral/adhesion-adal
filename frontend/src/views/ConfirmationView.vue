@@ -17,6 +17,10 @@ localStorage.removeItem('person');
             <br>
             <span id="junk-warning">Pensez à vérifier vos spams !</span>
         </p>
+        <div id="inscription">
+            <p>Voulez-vous aussi vous inscrire aux évènements ?</p>
+            <button><a href="https://inscription.amis-du-littoral.fr">Aller à l'inscription</a></button>
+        </div>
         <p id="session-end">Cette session s'est vidée, vous pouvez à présent fermer l'onglet ou la fenêtre.</p>
     </div>
 </template>
@@ -68,6 +72,41 @@ p#session-end {
     font-size: 90%;
     margin-top: 30px;
     font-style: italic;
+}
+
+div#inscription {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+div#inscription button {
+    padding: 20px;
+    border-radius: 25px;
+    border: 2px solid white;
+    background-color: #1d338f;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 15px;
+    margin-top: 10px;
+    font-family: 'Lexend', sans-serif;
+    transition: background-color ease-in .1s;
+}
+
+div#inscription button a {
+    color: white;
+    text-decoration: none;
+    font-size: 120%;
+}
+
+div#inscription button:hover {
+    background-color: #1d4e6a;
+    transition: background-color ease-in .1s;
 }
 
 </style>
