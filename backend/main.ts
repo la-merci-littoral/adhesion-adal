@@ -142,18 +142,15 @@ router.post("/payment/webhook", express.raw({ type: 'application/json' }), async
             { new: true } // Return the updated document
         );
 
-        if (!updateResult) {
-            res.status(404).send("Not found");
-            return;
+        if (updateResult !== null){
+            (updateResult as any).base_url = process.env.BASE_URL;
+            mailTransport.sendMail({
+                from: 'ADAL Ne pas Répondre ne-pas-repondre@amis-du-littoral.fr',
+                to: updateResult.email,
+                subject: "ADAL - Confirmation d'adhésion",
+                html: ejs.render(emailTemplates['adhesion-confirm'], updateResult),
+            });
         }
-
-        (updateResult as any).base_url = process.env.BASE_URL;
-        mailTransport.sendMail({
-            from: 'ADAL Ne pas Répondre ne-pas-repondre@amis-du-littoral.fr',
-            to: updateResult.email,
-            subject: "ADAL - Confirmation d'adhésion",
-            html: ejs.render(emailTemplates['adhesion-confirm'], updateResult),
-        });
     }
 
     res.json({ received: true });
